@@ -1,18 +1,21 @@
 import requests
 import json
 import os
-from datetime import datetime, timedelta
 import tkinter as tk
 from tkinter import ttk, messagebox
 from tkinter import StringVar
 from tkinter.ttk import Combobox
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import geocoder
 
 # Load configuration from a JSON file
 with open('config.json', 'r') as config_file:
     config = json.load(config_file)
 
 API_KEY = config['api_key']
-BASE_URL = 'http://api.openweathermap.org/data/2.5/weather'
+BASE_URL = 'http://api.openweathermap.org/data/2.5/'
 CACHE_FILE = 'weather_cache.json'
 CACHE_EXPIRY = timedelta(minutes=30)  # Cache expiry time
 
@@ -53,7 +56,7 @@ def get_weather(location, units='metric'):
         'units': units
     }
     try:
-        response = requests.get(BASE_URL, params=params)
+        response = requests.get(BASE_URL + 'weather', params=params)
         response.raise_for_status()
         data = response.json()
 
@@ -65,6 +68,23 @@ def get_weather(location, units='metric'):
         # Save to cache
         cache[location] = (datetime.now().isoformat(), data)
         save_cache(cache)
+        return data
+    except requests.exceptions.RequestException as e:
+        messagebox.showerror("Error", f"Network error: {e}")
+        return None
+
+
+def get_forecast(location, units='metric'):
+    """Fetch 5-day weather forecast data for a given location and units."""
+    params = {
+        'q': location,
+        'appid': API_KEY,
+        'units': units
+    }
+    try:
+        response = requests.get(BASE_URL + 'forecast', params=params)
+        response.raise_for_status()
+        data = response.json()
         return data
     except requests.exceptions.RequestException as e:
         messagebox.showerror("Error", f"Network error: {e}")
@@ -115,6 +135,53 @@ def fetch_weather():
         weather_icon_label.config(image=tk.PhotoImage(data=requests.get(icon_url).content))
         weather_icon_label.image = tk.PhotoImage(data=requests.get(icon_url).content)
 
+        # Fetch and display forecast
+        forecast_data = get_forecast(location, units)
+        display_forecast(forecast_data)
+
+
+def display_forecast(forecast_data):
+    """Display a 5-day weather forecast."""
+    if forecast_data:
+        dates = []
+        temps = []
+        for entry in forecast_data['list']:
+            date = datetime.utcfromtimestamp(entry['dt']).strftime('%Y-%m-%d %H:%M:%S')
+            temp = entry['main']['temp']
+            dates.append(date)
+            temps.append(temp)
+
+        fig, ax = plt.subplots()
+        ax.plot(dates, temps, marker='o')
+        ax.set_title('5-Day Weather Forecast')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Temperature (°C)')
+        ax.grid(True)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Embed the plot in the Tkinter window
+        canvas = FigureCanvasTkAgg(fig, master=root)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=6, column=0, columnspan=2)
+
+
+def detect_location():
+    """Detect the user's current location using geocoder."""
+    g = geocoder.ip('me')
+    if g.ok:
+        location_var.set(g.city)
+    else:
+        messagebox.showerror("Error", "Unable to detect location.")
+
+
+def switch_theme():
+    """Switch between light and dark themes."""
+    if root.tk.call("ttk::style", "theme", "use") == "clam":
+        root.tk.call("ttk::style", "theme", "use", "alt")
+    else:
+        root.tk.call("ttk::style", "theme", "use", "clam")
+
 
 # GUI setup
 root = tk.Tk()
@@ -131,6 +198,10 @@ location_label.grid(row=0, column=0, sticky=tk.W)
 location_var = StringVar()
 location_entry = ttk.Entry(frame, textvariable=location_var, width=50)
 location_entry.grid(row=0, column=1, sticky=(tk.W, tk.E))
+
+# Button to detect location
+detect_button = ttk.Button(frame, text="Detect Location", command=detect_location)
+detect_button.grid(row=0, column=2)
 
 # Radio buttons for unit selection
 unit_var = tk.StringVar(value='metric')
@@ -155,5 +226,9 @@ loading_label.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E))
 # Label to display weather icon
 weather_icon_label = ttk.Label(frame, text="")
 weather_icon_label.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E))
+
+# Button to switch themes
+theme_button = ttk.Button(frame, text="Switch Theme", command=switch_theme)
+theme_button.grid(row=5, column=2)
 
 root.mainloop()
