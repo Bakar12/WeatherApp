@@ -1,0 +1,36 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Weather App"
+msgstr "Aplicación del Tiempo"
+
+msgid "Enter the location:"
+msgstr "Ingrese la ubicación:"
+
+msgid "Detect Location"
+msgstr "Detectar Ubicación"
+
+msgid "Fetch Weather"
+msgstr "Obtener Tiempo"
+
+msgid "Save Location"
+msgstr "Guardar Ubicación"
+
+msgid "Metric"
+msgstr "Métrico"
+
+msgid "Imperial"
+msgstr "Imperial"
+
+msgid "Start Date (YYYY-MM-DD):"
+msgstr "Fecha de Inicio (AAAA-MM-DD):"
+
+msgid "End Date (YYYY-MM-DD):"
+msgstr "Fecha de Fin (AAAA-MM-DD):"
+
+msgid "Fetch Historical Weather"
+msgstr "Obtener Tiempo Histórico"
+
+msgid "Switch Theme"
+msgstr "Cambiar Tema"
