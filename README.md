@@ -23,6 +23,10 @@ This is a Python application that fetches and displays weather data for a given 
 - Includes a graph for the 5-day forecast.
 - Improved UI with better layout and custom buttons.
 - Includes a button to detect the user's current location.
+- Integrated weather alerts from the API and displays them in the UI.
+- Provides access to historical weather data by adding start and end date inputs and displaying the data.
+- Added support for multiple languages using gettext.
+- Enhanced error handling and added the ability to load cached data when offline.
 
 ## Setup
 
