@@ -1,11 +1,28 @@
 # Weather Application
 
-This is a simple Python application that fetches and displays weather data for a given location. The application uses the OpenWeatherMap API to fetch the data and caches it locally for 30 minutes to reduce unnecessary API calls.
+This is a Python application that fetches and displays weather data for a given location. The application uses the OpenWeatherMap API to fetch the data and caches it locally for 30 minutes to reduce unnecessary API calls.
 
 ## Requirements
 
 - Python 3.6 or higher
 - `requests` library
+- `tkinter` library
+- `matplotlib` library
+- `geocoder` library
+
+## Features
+
+- Fetches and displays current weather data for a given location.
+- Provides auto-completion for city names.
+- Displays an icon representing the current weather.
+- Shows a 5-day weather forecast with a graph.
+- Allows unit conversion through radio buttons for unit selection.
+- Uses ttk widgets for better responsiveness.
+- Includes a button to switch between light and dark themes.
+- Displays weather icons from the API.
+- Includes a graph for the 5-day forecast.
+- Improved UI with better layout and custom buttons.
+- Includes a button to detect the user's current location.
 
 ## Setup
 
